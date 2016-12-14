@@ -146,3 +146,17 @@ table {
 .visible{
   visibility: visible;
 }
+
+#resetcontainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+}
+
+#resetbutton{
+  text-align: center;
+  width: 100px;
+  padding: 10px;
+  background-color: rgba(50, 50, 50, .6);
+}

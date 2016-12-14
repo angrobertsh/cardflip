@@ -5,11 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let scoreDiv = document.getElementById("score");
     let matchesDiv = document.getElementsByClassName("matches");
     let matchesButton = document.getElementById("matchbutton");
+    let resetButton = document.getElementById("resetbutton");
 
-    let game = new Game(boardDiv, scoreDiv, matchesDiv[0], matchbutton);
+    let game = new Game(boardDiv, scoreDiv, matchesDiv[0]);
     game.render();
 
     matchesButton.addEventListener('click', toggleMatches);
+    resetButton.addEventListener('click', () => {
+      game = new Game(boardDiv, scoreDiv, matchesDiv[0]);
+      game.render();
+      game.renderMatches();
+    });
 });
 
 const toggleMatches = (event) => {

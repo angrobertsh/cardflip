@@ -57,11 +57,17 @@
 	  var scoreDiv = document.getElementById("score");
 	  var matchesDiv = document.getElementsByClassName("matches");
 	  var matchesButton = document.getElementById("matchbutton");
+	  var resetButton = document.getElementById("resetbutton");
 	
-	  var game = new _game2.default(boardDiv, scoreDiv, matchesDiv[0], matchbutton);
+	  var game = new _game2.default(boardDiv, scoreDiv, matchesDiv[0]);
 	  game.render();
 	
 	  matchesButton.addEventListener('click', toggleMatches);
+	  resetButton.addEventListener('click', function () {
+	    game = new _game2.default(boardDiv, scoreDiv, matchesDiv[0]);
+	    game.render();
+	    game.renderMatches();
+	  });
 	});
 	
 	var toggleMatches = function toggleMatches(event) {
@@ -114,6 +120,7 @@
 	    this.boardView = boardView;
 	    this.scoreView = scoreView;
 	    this.matchesView = matchesView;
+	    this.scoreView.innerHTML = "Welcome to Cardflip!";
 	  }
 	
 	  _createClass(Game, [{

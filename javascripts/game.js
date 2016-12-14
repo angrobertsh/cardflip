@@ -9,6 +9,7 @@ class Game{
     this.boardView = boardView;
     this.scoreView = scoreView;
     this.matchesView = matchesView;
+    this.scoreView.innerHTML = "Welcome to Cardflip!"
   }
 
   flip(event){

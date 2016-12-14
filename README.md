@@ -5,7 +5,7 @@
   Cardflip is a matching card game where you flip cards until you get all the matches. Click on cards to flip them, and if they go blue, they're matched! See your matches by toggling the matches button, and see your score at the top of the screen!
 
 ## Technologies
-  This website was made with JavaScript, invoking the regular inheritance patterns required by ES6. Files are bundled with webpack and code is transpiled with babel. The DOM is altered using regular JavaScript to append children onto DOM elements.
+  This website was made with JavaScript, invoking the regular inheritance patterns required by ES6. Files are bundled with webpack and code is transpiled with babel. The DOM is altered using regular JavaScript to append children onto DOM elements. There's also a single animation made with [animate.css](https://github.com/daneden/animate.css).
 
 ## Implementation details
 
@@ -89,6 +89,15 @@ User input is determined by `click` event listeners, and information is passed t
   }
 ```
 
+Finally, when all matches are made, an alert is sounded signaling a win.
+
+```javascript
+  won(){
+    if(this.score === 26){
+      alert("You win!");
+    }
+  }
+```
 
 ## Future features
   Cardflip uses very elementary CSS. Future implementations would involve creating better color and opacity coordination, invoking better transitions on flipping cards, and using better fonts.
