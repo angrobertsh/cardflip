@@ -47,26 +47,33 @@ class Game{
     this.render();
 
     if(this.flippedArr.length == 2){
-      let card1 = this.flippedArr[0];
-      let card2 = this.flippedArr[1]
-      if(this.match(card1, card2)){
-        this.renderScore();
-        this.renderMatches();
-        this.render();
-      } else {
-        this.currentPlayer.finishTurn();
-        if(this.currentPlayer.name === this.p1.name && this.p2){
-          this.currentPlayer = this.p2;
-        } else {
-          this.currentPlayer = this.p1;
-        }
-        card1.unflip();
-        card2.unflip();
-      }
-      this.flippedArr = [];
-      this.currentPlayer.takeTurn(this);
+      this.processTurn();
     }
 
+  }
+
+  processTurn(){
+    let card1 = this.flippedArr[0];
+    let card2 = this.flippedArr[1]
+    if(this.match(card1, card2)){
+      this.renderScore();
+      this.renderMatches();
+      this.render();
+      if(this.won()){
+        return;
+      }
+    } else {
+      this.currentPlayer.finishTurn();
+      if(this.currentPlayer.name === this.p1.name && this.p2){
+        this.currentPlayer = this.p2;
+      } else {
+        this.currentPlayer = this.p1;
+      }
+      card1.unflip();
+      card2.unflip();
+    }
+    this.flippedArr = [];
+    this.currentPlayer.takeTurn(this);
   }
 
   match(card1, card2){
@@ -80,7 +87,6 @@ class Game{
         this.p2.forget(card2.value, this.board.locate(card2));
       }
       this.currentPlayer.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
-      this.won();
       return true;
     }
     return false

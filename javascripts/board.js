@@ -16,7 +16,7 @@ class Board{
 
   remove(card){
     let idx = this.locate(card);
-    if(idx !== undefined){
+    if(idx > -1){
       this.data[idx] = undefined;
     }
     return card;

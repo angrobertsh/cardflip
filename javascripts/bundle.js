@@ -46,9 +46,9 @@
 
 	'use strict';
 	
-	var _game4 = __webpack_require__(1);
+	var _game = __webpack_require__(1);
 	
-	var _game5 = _interopRequireDefault(_game4);
+	var _game2 = _interopRequireDefault(_game);
 	
 	var _player = __webpack_require__(5);
 	
@@ -62,19 +62,15 @@
 	  var matchesDiv = document.getElementsByClassName("matches");
 	  var matchesButton = document.getElementById("matchbutton");
 	  var matchesButton2 = document.getElementById("matchbutton2");
+	  var matchBox = document.getElementById("matchbox");
 	  var matchBox2 = document.getElementById("matchbox2");
 	  var resetButton = document.getElementById("resetbutton");
 	
-	  var type = prompt("Would you like to play alone?", "Yes");
-	  if (type === "Yes") {
-	    var game = new _game5.default(boardDiv, scoreDiv, matchesDiv[0], new _player2.default("Human", "Human"), matchesDiv[1], matchBox2);
-	  } else {
-	    alert("Now playing against a computer player");
-	    var _game = new _game5.default(boardDiv, scoreDiv, matchesDiv[0], new _player2.default("Human", "Human"), matchesDiv[1], matchBox2, new _player2.default("Computer", "Computer"));
-	  }
-	
 	  matchesButton.addEventListener('click', toggleMatches);
 	  matchesButton2.addEventListener('click', toggleMatches2);
+	
+	  startGame(boardDiv, scoreDiv, matchesDiv[0], matchesDiv[1], matchBox2);
+	
 	  resetButton.addEventListener('click', function () {
 	    if (window.timeout2) {
 	      clearTimeout(window.timeout2);
@@ -82,38 +78,31 @@
 	    if (window.timeout) {
 	      clearTimeout(window.timeout);
 	    }
-	    var type = prompt("Would you like to play alone?", "Yes");
-	    if (type === "Yes") {
-	      var _game2 = new _game5.default(boardDiv, scoreDiv, matchesDiv[0], new _player2.default("Human", "Human"), matchesDiv[1], matchBox2);
-	    } else {
-	      alert("Now playing against a computer player");
-	      var _game3 = new _game5.default(boardDiv, scoreDiv, matchesDiv[0], new _player2.default("Human", "Human"), matchesDiv[1], matchBox2, new _player2.default("Computer", "Computer"));
-	    }
+	    startGame(boardDiv, scoreDiv, matchesDiv[0], matchesDiv[1], matchBox2);
 	  });
 	});
 	
+	var startGame = function startGame(boardEl, scoreEl, matchesEl, matches2El, matchBoxEl) {
+	  var type = prompt("Would you like to play alone?", "Yes");
+	  var player2 = undefined;
+	  if (type !== "Yes") {
+	    alert("Now playing against a computer player");
+	    player2 = new _player2.default("Computer", "Computer");
+	  }
+	  var game = new _game2.default(boardEl, scoreEl, matchesEl, new _player2.default("Human", "Human"), matches2El, matchBoxEl, player2);
+	};
+	
 	var toggleMatches = function toggleMatches(event) {
 	  var el = document.getElementsByClassName("matches")[0];
-	
-	  if (el.classList) {
-	    el.classList.toggle("invisible");
-	  } else {
-	    var classes = el.className.split(' ');
-	    var existingIndex = classes.indexOf("invisible");
-	
-	    if (existingIndex >= 0) {
-	      classes.splice(existingIndex, 1);
-	    } else {
-	      classes.push("invisible");
-	    }
-	
-	    el.className = classes.join(' ');
-	  }
+	  toggleEl(el);
 	};
 	
 	var toggleMatches2 = function toggleMatches2(event) {
 	  var el = document.getElementsByClassName("matches")[1];
+	  toggleEl(el);
+	};
 	
+	var toggleEl = function toggleEl(el) {
 	  if (el.classList) {
 	    el.classList.toggle("invisible");
 	  } else {
@@ -205,25 +194,33 @@
 	      this.render();
 	
 	      if (this.flippedArr.length == 2) {
-	        var card1 = this.flippedArr[0];
-	        var card2 = this.flippedArr[1];
-	        if (this.match(card1, card2)) {
-	          this.renderScore();
-	          this.renderMatches();
-	          this.render();
-	        } else {
-	          this.currentPlayer.finishTurn();
-	          if (this.currentPlayer.name === this.p1.name && this.p2) {
-	            this.currentPlayer = this.p2;
-	          } else {
-	            this.currentPlayer = this.p1;
-	          }
-	          card1.unflip();
-	          card2.unflip();
-	        }
-	        this.flippedArr = [];
-	        this.currentPlayer.takeTurn(this);
+	        this.processTurn();
 	      }
+	    }
+	  }, {
+	    key: "processTurn",
+	    value: function processTurn() {
+	      var card1 = this.flippedArr[0];
+	      var card2 = this.flippedArr[1];
+	      if (this.match(card1, card2)) {
+	        this.renderScore();
+	        this.renderMatches();
+	        this.render();
+	        if (this.won()) {
+	          return;
+	        }
+	      } else {
+	        this.currentPlayer.finishTurn();
+	        if (this.currentPlayer.name === this.p1.name && this.p2) {
+	          this.currentPlayer = this.p2;
+	        } else {
+	          this.currentPlayer = this.p1;
+	        }
+	        card1.unflip();
+	        card2.unflip();
+	      }
+	      this.flippedArr = [];
+	      this.currentPlayer.takeTurn(this);
 	    }
 	  }, {
 	    key: "match",
@@ -238,7 +235,6 @@
 	          this.p2.forget(card2.value, this.board.locate(card2));
 	        }
 	        this.currentPlayer.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
-	        this.won();
 	        return true;
 	      }
 	      return false;
@@ -398,7 +394,7 @@
 	    key: 'remove',
 	    value: function remove(card) {
 	      var idx = this.locate(card);
-	      if (idx !== undefined) {
+	      if (idx > -1) {
 	        this.data[idx] = undefined;
 	      }
 	      return card;
