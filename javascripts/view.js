@@ -2,19 +2,18 @@ import Game from './game';
 import Player from './player';
 
 document.addEventListener("DOMContentLoaded", () => {
-  let boardDiv = document.getElementById("board");
-  let scoreDiv = document.getElementById("score");
-  let matchesDiv = document.getElementsByClassName("matches");
+  let boardEl = document.getElementById("board");
+  let scoreEl = document.getElementById("score");
+  let matchesEls = document.getElementsByClassName("matches");
   let matchesButton = document.getElementById("matchbutton");
   let matchesButton2 = document.getElementById("matchbutton2");
-  let matchBox = document.getElementById("matchbox");
-  let matchBox2 = document.getElementById("matchbox2");
+  let matchBoxEl2 = document.getElementById("matchbox2");
   let resetButton = document.getElementById("resetbutton");
 
   matchesButton.addEventListener('click', toggleMatches);
   matchesButton2.addEventListener('click', toggleMatches2);
 
-  startGame(boardDiv, scoreDiv, matchesDiv[0], matchesDiv[1], matchBox2);
+  startGame(boardEl, scoreEl, matchesEls[0], matchesEls[1], matchBoxEl2);
 
   resetButton.addEventListener('click', () => {
     if(window.timeout2){
@@ -23,18 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if(window.timeout){
       clearTimeout(window.timeout);
     }
-    startGame(boardDiv, scoreDiv, matchesDiv[0], matchesDiv[1], matchBox2);
+    startGame(boardEl, scoreEl, matchesEls[0], matchesEls[1], matchBoxEl2);
   });
 });
 
-const startGame = (boardEl, scoreEl, matchesEl, matches2El, matchBoxEl) => {
+const startGame = (boardEl, scoreEl, matchesEl, matches2El, matchBoxElEl) => {
   let type = prompt("Would you like to play alone?", "Yes");
   let player2 = undefined;
   if(type !== "Yes"){
     alert("Now playing against a computer player");
     player2 = new Player("Computer", "Computer");
   }
-  let game = new Game(boardEl, scoreEl, matchesEl, new Player("Human", "Human"), matches2El, matchBoxEl, player2);
+  let game = new Game(boardEl, scoreEl, matchesEl, new Player("Human", "Human"), matches2El, matchBoxElEl, player2);
 }
 
 const toggleMatches = (event) => {

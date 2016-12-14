@@ -57,19 +57,18 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  var boardDiv = document.getElementById("board");
-	  var scoreDiv = document.getElementById("score");
-	  var matchesDiv = document.getElementsByClassName("matches");
+	  var boardEl = document.getElementById("board");
+	  var scoreEl = document.getElementById("score");
+	  var matchesEls = document.getElementsByClassName("matches");
 	  var matchesButton = document.getElementById("matchbutton");
 	  var matchesButton2 = document.getElementById("matchbutton2");
-	  var matchBox = document.getElementById("matchbox");
-	  var matchBox2 = document.getElementById("matchbox2");
+	  var matchBoxEl2 = document.getElementById("matchbox2");
 	  var resetButton = document.getElementById("resetbutton");
 	
 	  matchesButton.addEventListener('click', toggleMatches);
 	  matchesButton2.addEventListener('click', toggleMatches2);
 	
-	  startGame(boardDiv, scoreDiv, matchesDiv[0], matchesDiv[1], matchBox2);
+	  startGame(boardEl, scoreEl, matchesEls[0], matchesEls[1], matchBoxEl2);
 	
 	  resetButton.addEventListener('click', function () {
 	    if (window.timeout2) {
@@ -78,18 +77,18 @@
 	    if (window.timeout) {
 	      clearTimeout(window.timeout);
 	    }
-	    startGame(boardDiv, scoreDiv, matchesDiv[0], matchesDiv[1], matchBox2);
+	    startGame(boardEl, scoreEl, matchesEls[0], matchesEls[1], matchBoxEl2);
 	  });
 	});
 	
-	var startGame = function startGame(boardEl, scoreEl, matchesEl, matches2El, matchBoxEl) {
+	var startGame = function startGame(boardEl, scoreEl, matchesEl, matches2El, matchBoxElEl) {
 	  var type = prompt("Would you like to play alone?", "Yes");
 	  var player2 = undefined;
 	  if (type !== "Yes") {
 	    alert("Now playing against a computer player");
 	    player2 = new _player2.default("Computer", "Computer");
 	  }
-	  var game = new _game2.default(boardEl, scoreEl, matchesEl, new _player2.default("Human", "Human"), matches2El, matchBoxEl, player2);
+	  var game = new _game2.default(boardEl, scoreEl, matchesEl, new _player2.default("Human", "Human"), matches2El, matchBoxElEl, player2);
 	};
 	
 	var toggleMatches = function toggleMatches(event) {
