@@ -15,16 +15,32 @@ class Board{
   }
 
   remove(card){
-    let val = card.value;
-    let suit = card.suit;
-    for(let i = 0; i < this.data.length; i++){
-      if(this.data[i]){
-        if(this.data[i].value === val && this.data[i].suit === suit){
-          this.data[i] = undefined;
-        }        
-      }
+    let idx = this.locate(card);
+    if(idx !== undefined){
+      this.data[idx] = undefined;
     }
     return card;
+  }
+
+  validMoves(){
+    let moves = [];
+    for(let i = 0; i < this.data.length; i++){
+      if(this.data[i]){
+        moves.push(i);
+      }
+    }
+    return moves;
+  }
+
+  locate(card){
+    for(let i = 0; i < this.data.length; i++){
+      if(this.data[i]){
+        if(this.data[i].value === card.value && this.data[i].suit === card.suit){
+          return i;
+        }
+      }
+    }
+    return undefined;
   }
 
 }

@@ -1,46 +1,85 @@
 import Board from './board';
 
 class Game{
-  constructor(boardView, scoreView, matchesView){
-    this.score = 0;
-    this.matchedPairs = [];
+  constructor(boardView, scoreView, matchesView, p1, matchesView2, matchBox2, p2 = undefined){
+    this.p1 = p1;
+    this.p2 = p2;
+    this.currentPlayer = p1;
     this.flippedArr = [];
     this.board = new Board();
     this.boardView = boardView;
     this.scoreView = scoreView;
     this.matchesView = matchesView;
-    this.scoreView.innerHTML = "Welcome to Cardflip!"
+    this.matchesView2 = matchesView2;
+    this.matchBox2 = matchBox2;
+    this.initializeGame();
   }
 
-  flip(event){
-    let loc = parseInt(event.currentTarget.id);
-
-    let cardToFlip = this.board.data[loc];
-    if(this.flippedArr.length == 2){
-      this.flippedArr[0].unflip();
-      this.flippedArr[1].unflip();
-      this.flippedArr = [];
+  initializeGame(){
+    this.scoreView.innerHTML = "Welcome to Cardflip!"
+    if(this.p2){
+      this.matchBox2.className = "visible";
+    } else {
+      this.matchBox2.className = "invisible";
     }
+    this.render();
+    this.renderMatches();
+    while(this.won === false){
+      this.currentPlayer.takeTurn(this);
+    }
+  }
+
+  clickFlip(event){
+    let loc = parseInt(event.currentTarget.id);
+    this.flipLoc(loc);
+  }
+
+  flipLoc(loc){
+    let cardToFlip = this.board.data[loc];
 
     cardToFlip.flip();
     this.flippedArr.push(cardToFlip);
 
+    this.p1.remember(cardToFlip.value, loc);
+    if(this.p2){
+      this.p2.remember(cardToFlip.value, loc);
+    }
+    this.render();
+
     if(this.flippedArr.length == 2){
-      if(this.match(this.flippedArr[0], this.flippedArr[1])){
-        this.flippedArr = [];
+      let card1 = this.flippedArr[0];
+      let card2 = this.flippedArr[1]
+      if(this.match(card1, card2)){
         this.renderScore();
         this.renderMatches();
+        this.render();
+      } else {
+        this.currentPlayer.finishTurn();
+        if(this.currentPlayer.name === this.p1.name && this.p2){
+          this.currentPlayer = this.p2;
+        } else {
+          this.currentPlayer = this.p1;
+        }
+        card1.unflip();
+        card2.unflip();
       }
+      this.flippedArr = [];
+      this.currentPlayer.takeTurn(this);
     }
 
-    this.render();
   }
 
   match(card1, card2){
     if(card1.value === card2.value){
-      this.score += 1;
       this.cheer();
-      this.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
+      this.currentPlayer.score += 1;
+      this.p1.forget(card1.value, this.board.locate(card1));
+      this.p1.forget(card2.value, this.board.locate(card2));
+      if(this.p2){
+        this.p2.forget(card1.value, this.board.locate(card1));
+        this.p2.forget(card2.value, this.board.locate(card2));
+      }
+      this.currentPlayer.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
       this.won();
       return true;
     }
@@ -62,7 +101,7 @@ class Game{
         if(item.flipped){
           newCell.innerHTML = `${val} <br /> of <br /> ${suit}`;
         } else {
-          newCell.addEventListener("click", this.flip.bind(this));
+          newCell.addEventListener("click", this.clickFlip.bind(this));
         }
       }
       this.boardView.appendChild(newCell);
@@ -70,29 +109,52 @@ class Game{
   }
 
   renderScore(){
-    this.scoreView.innerHTML = `Score: ${this.score} Matches!`
+    if(this.p1 && this.p2){
+      this.scoreView.innerHTML = `${this.p1.name}: ${this.p1.score}! ${this.p2.name}: ${this.p2.score}!`
+    }else{
+      this.scoreView.innerHTML = `Score: ${this.p1.score} Matches!`
+    }
   }
 
   renderMatches(){
-    this.matchesView.innerHTML = "";
-    for(let i = 0; i < this.matchedPairs.length; i++){
-      let pair = this.matchedPairs[i];
+    this.renderPlayerMatches(this.p1, this.matchesView);
+    if(this.p2){
+      this.renderPlayerMatches(this.p2, this.matchesView2);
+    }
+  }
+
+  renderPlayerMatches(player, view){
+    view.innerHTML = "";
+    for(let i = 0; i < player.matchedPairs.length; i++){
+      let pair = player.matchedPairs[i];
       let pairDiv = document.createElement("div");
       pairDiv.className = "pair";
       for(let j = 0; j < 2; j++){
         let card = document.createElement("div");
         card.className = "card matched true";
-        card.innerHTML = `${this.matchedPairs[i][j].value} <br /> of <br /> ${this.matchedPairs[i][j].suit}`;
+        card.innerHTML = `${player.matchedPairs[i][j].value} <br /> of <br /> ${player.matchedPairs[i][j].suit}`;
         pairDiv.appendChild(card);
       }
-      this.matchesView.appendChild(pairDiv);
+      view.appendChild(pairDiv);
     }
   }
 
   won(){
-    if(this.score === 26){
-      alert("You win!");
+    for(let i = 0; i < this.board.data.length; i++){
+      if(this.board.data[i]){
+        return false;
+      }
     }
+    if(this.p2){
+      if(this.p1.score > this.p2.score){
+        this.scoreView.innerHTML = `Game over! ${this.p1.name} wins!`;
+      } else {
+        this.scoreView.innerHTML = `Game over! ${this.p2.name} wins!`;
+      }
+    } else {
+      this.scoreView.innerHTML = `Game over! You win!`;
+    }
+    return true;
   }
 
   cheer(){
@@ -125,7 +187,6 @@ class Game{
   }
 
 }
-
 
 
 export default Game;
