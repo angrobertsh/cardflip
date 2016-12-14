@@ -8,7 +8,7 @@ class Deck{
     this.cards = [];
     for(let i = 0; i < suits.length; i++){
       for(let j = 0; j < nums.length; j++){
-        this.cards.push(new Card(suits[i], nums[j]));
+        this.cards.push(new Card(nums[j], suits[i]));
       }
     }
   }

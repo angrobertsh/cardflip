@@ -4,6 +4,15 @@ class Card{
     this.suit = suit;
     this.flipped = false;
   }
+
+  flip(){
+    this.flipped = true;
+  }
+
+  unflip(){
+    this.flipped = false;
+  }
+
 }
 
 export default Card;

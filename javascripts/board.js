@@ -9,8 +9,8 @@ class Board{
 
   setup(){
     this.deck.shuffle()
-    for(let i = 0; i < this.deck.length; i++){
-      this.data.push(this.deck[i]);
+    for(let i = 0; i < this.deck.cards.length; i++){
+      this.data.push(this.deck.cards[i]);
     }
   }
 
@@ -18,8 +18,10 @@ class Board{
     let val = card.value;
     let suit = card.suit;
     for(let i = 0; i < this.data.length; i++){
-      if(this.data[i].value === val && this.data[i].suit === suit){
-        this.data[i] = [];
+      if(this.data[i]){
+        if(this.data[i].value === val && this.data[i].suit === suit){
+          this.data[i] = undefined;
+        }        
       }
     }
     return card;

@@ -1,0 +1,31 @@
+.card {
+  width: 80px;
+  height: 125px;
+  color: rgba(0, 0, 0, 1);
+  background-color: rgba(255, 0, 0, 0.5);
+  margin: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty {
+  width: 80px;
+  height: 125px;
+  background-color: rgba(50, 0, 255, .8);
+  margin: 6px;
+}
+
+#board{
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  width: 1200px;
+}
+
+#score{
+  text-align: center;
+  margin: 0 auto;
+  padding: 15px;
+  font-size: 24px;
+}

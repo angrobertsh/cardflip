@@ -44,7 +44,27 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
+	
+	var _game = __webpack_require__(1);
+	
+	var _game2 = _interopRequireDefault(_game);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	document.addEventListener("DOMContentLoaded", function () {
+	    var boardDiv = document.getElementById("board");
+	    var scoreDiv = document.getElementById("score");
+	    var matchesDiv = document.getElementById("matches");
+	    var game = new _game2.default(boardDiv, scoreDiv, matchesDiv);
+	    game.render();
+	});
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -52,7 +72,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _board = __webpack_require__(1);
+	var _board = __webpack_require__(2);
 	
 	var _board2 = _interopRequireDefault(_board);
 	
@@ -61,39 +81,44 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Game = function () {
-	  function Game(view) {
+	  function Game(boardView, scoreView, matchesView) {
 	    _classCallCheck(this, Game);
 	
 	    this.score = 0;
 	    this.matchedPairs = [];
 	    this.flippedArr = [];
 	    this.board = new _board2.default();
-	    this.view = view;
+	    this.boardView = boardView;
+	    this.scoreView = scoreView;
+	    this.matchesView = matchesView;
 	  }
 	
 	  _createClass(Game, [{
-	    key: 'flip',
-	    value: function flip(loc) {
+	    key: "flip",
+	    value: function flip(event) {
+	      var loc = parseInt(event.currentTarget.id);
+	
 	      var cardToFlip = this.board.data[loc];
 	      if (this.flippedArr.length == 2) {
-	        this.flippedArr[0].flipped = false;
-	        this.flippedArr[1].flipped = false;
+	        this.flippedArr[0].unflip();
+	        this.flippedArr[1].unflip();
 	        this.flippedArr = [];
 	      }
 	
-	      cardToFlip.flipped = true;
+	      cardToFlip.flip();
 	      this.flippedArr.push(cardToFlip);
 	
 	      if (this.flippedArr.length == 2) {
 	        if (this.match(this.flippedArr[0], this.flippedArr[1])) {
 	          this.flippedArr = [];
+	          this.renderScore();
 	        }
 	      }
 	
 	      this.render();
 	    }
 	  }, {
-	    key: 'match',
+	    key: "match",
 	    value: function match(card1, card2) {
 	      if (card1.value === card2.value) {
 	        this.score += 1;
@@ -103,9 +128,32 @@
 	      return false;
 	    }
 	  }, {
-	    key: 'render',
+	    key: "render",
 	    value: function render() {
-	      for (var i = 0; i < this.board.data.length; i++) {}
+	      this.boardView.innerHTML = "";
+	      for (var i = 0; i < this.board.data.length; i++) {
+	        var newCell = document.createElement("div");
+	        var item = this.board.data[i];
+	        if (item === undefined) {
+	          newCell.className = "empty";
+	        } else {
+	          var val = item.value;
+	          var suit = item.suit;
+	          newCell.className = "card " + item.flipped;
+	          newCell.id = "" + i;
+	          if (item.flipped) {
+	            newCell.innerHTML = val + " of " + suit;
+	          } else {
+	            newCell.addEventListener("click", this.flip.bind(this));
+	          }
+	        }
+	        this.boardView.appendChild(newCell);
+	      }
+	    }
+	  }, {
+	    key: "renderScore",
+	    value: function renderScore() {
+	      this.scoreView.innerHTML = "Score: " + this.score + " Matches!";
 	    }
 	  }]);
 	
@@ -115,7 +163,7 @@
 	exports.default = Game;
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -147,8 +195,8 @@
 	    key: 'setup',
 	    value: function setup() {
 	      this.deck.shuffle();
-	      for (var i = 0; i < this.deck.length; i++) {
-	        this.data.push(this.deck[i]);
+	      for (var i = 0; i < this.deck.cards.length; i++) {
+	        this.data.push(this.deck.cards[i]);
 	      }
 	    }
 	  }, {
@@ -157,8 +205,10 @@
 	      var val = card.value;
 	      var suit = card.suit;
 	      for (var i = 0; i < this.data.length; i++) {
-	        if (this.data[i].value === val && this.data[i].suit === suit) {
-	          this.data[i] = [];
+	        if (this.data[i]) {
+	          if (this.data[i].value === val && this.data[i].suit === suit) {
+	            this.data[i] = undefined;
+	          }
 	        }
 	      }
 	      return card;
@@ -169,28 +219,6 @@
 	}();
 	
 	exports.default = Board;
-
-/***/ },
-/* 2 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Card = function Card(value, suit) {
-	  _classCallCheck(this, Card);
-	
-	  this.value = value;
-	  this.suit = suit;
-	  this.flipped = false;
-	};
-	
-	exports.default = Card;
 
 /***/ },
 /* 3 */
@@ -204,7 +232,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _card = __webpack_require__(2);
+	var _card = __webpack_require__(4);
 	
 	var _card2 = _interopRequireDefault(_card);
 	
@@ -222,7 +250,7 @@
 	    this.cards = [];
 	    for (var i = 0; i < suits.length; i++) {
 	      for (var j = 0; j < nums.length; j++) {
-	        this.cards.push(new _card2.default(suits[i], nums[j]));
+	        this.cards.push(new _card2.default(nums[j], suits[i]));
 	      }
 	    }
 	  }
@@ -246,6 +274,46 @@
 	}();
 	
 	exports.default = Deck;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Card = function () {
+	  function Card(value, suit) {
+	    _classCallCheck(this, Card);
+	
+	    this.value = value;
+	    this.suit = suit;
+	    this.flipped = false;
+	  }
+	
+	  _createClass(Card, [{
+	    key: "flip",
+	    value: function flip() {
+	      this.flipped = true;
+	    }
+	  }, {
+	    key: "unflip",
+	    value: function unflip() {
+	      this.flipped = false;
+	    }
+	  }]);
+	
+	  return Card;
+	}();
+	
+	exports.default = Card;
 
 /***/ }
 /******/ ]);
