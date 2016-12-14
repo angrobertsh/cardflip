@@ -110,3 +110,39 @@ table {
 .invisible{
   display: none;
 }
+
+.matchcries{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  visibility: hidden;
+}
+
+
+.matchedcrycontainer{
+  display: flex;
+  flex-direction: column;
+  width: 270px;
+  height: 50px;
+  text-align: center;
+}
+
+.matchedcry {
+  font-size: 64px;
+  width: 270px;
+  height: 50px;
+  position: absolute;
+  color: (0, 0, 0, 1);
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.visible{
+  visibility: visible;
+}

@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let matchesDiv = document.getElementsByClassName("matches");
     let matchesButton = document.getElementById("matchbutton");
 
-    debugger
-
     let game = new Game(boardDiv, scoreDiv, matchesDiv[0], matchbutton);
     game.render();
 
@@ -16,8 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const toggleMatches = (event) => {
   let el = document.getElementsByClassName("matches")[0];
-
-  debugger
 
   if (el.classList) {
     el.classList.toggle("invisible");

@@ -38,6 +38,7 @@ class Game{
   match(card1, card2){
     if(card1.value === card2.value){
       this.score += 1;
+      this.cheer();
       this.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
       this.won();
       return true;
@@ -90,6 +91,35 @@ class Game{
   won(){
     if(this.score === 26){
       alert("You win!");
+    }
+  }
+
+  cheer(){
+    let matchcry = document.getElementById("amatch");
+    matchcry.classList.add("fadeIn", "animated", "visible");
+    matchcry.classList.remove("hidden");
+
+    let transitionEvent = this.whichTransitionEvent();
+    transitionEvent && matchcry.addEventListener(transitionEvent, () => {
+      matchcry.classList.remove("fadeIn", "animated", "visible");
+      matchcry.classList.add("hidden");
+    });
+  }
+
+  whichTransitionEvent(){
+    let t;
+    let el = document.createElement('fakeelement');
+    let transitions = {
+      'animation':'animationend',
+      'OAnimation':'oAnimationEnd',
+      'MozAnimation':'animationend',
+      'WebkitAnimation':'webkitAnimationEnd'
+    }
+
+    for(t in transitions){
+      if( el.style[t] !== undefined ){
+        return transitions[t];
+      }
     }
   }
 

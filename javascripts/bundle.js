@@ -58,8 +58,6 @@
 	  var matchesDiv = document.getElementsByClassName("matches");
 	  var matchesButton = document.getElementById("matchbutton");
 	
-	  debugger;
-	
 	  var game = new _game2.default(boardDiv, scoreDiv, matchesDiv[0], matchbutton);
 	  game.render();
 	
@@ -68,8 +66,6 @@
 	
 	var toggleMatches = function toggleMatches(event) {
 	  var el = document.getElementsByClassName("matches")[0];
-	
-	  debugger;
 	
 	  if (el.classList) {
 	    el.classList.toggle("invisible");
@@ -150,6 +146,7 @@
 	    value: function match(card1, card2) {
 	      if (card1.value === card2.value) {
 	        this.score += 1;
+	        this.cheer();
 	        this.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
 	        this.won();
 	        return true;
@@ -206,6 +203,37 @@
 	    value: function won() {
 	      if (this.score === 26) {
 	        alert("You win!");
+	      }
+	    }
+	  }, {
+	    key: "cheer",
+	    value: function cheer() {
+	      var matchcry = document.getElementById("amatch");
+	      matchcry.classList.add("fadeIn", "animated", "visible");
+	      matchcry.classList.remove("hidden");
+	
+	      var transitionEvent = this.whichTransitionEvent();
+	      transitionEvent && matchcry.addEventListener(transitionEvent, function () {
+	        matchcry.classList.remove("fadeIn", "animated", "visible");
+	        matchcry.classList.add("hidden");
+	      });
+	    }
+	  }, {
+	    key: "whichTransitionEvent",
+	    value: function whichTransitionEvent() {
+	      var t = void 0;
+	      var el = document.createElement('fakeelement');
+	      var transitions = {
+	        'animation': 'animationend',
+	        'OAnimation': 'oAnimationEnd',
+	        'MozAnimation': 'animationend',
+	        'WebkitAnimation': 'webkitAnimationEnd'
+	      };
+	
+	      for (t in transitions) {
+	        if (el.style[t] !== undefined) {
+	          return transitions[t];
+	        }
 	      }
 	    }
 	  }]);
