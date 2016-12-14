@@ -53,12 +53,39 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	    var boardDiv = document.getElementById("board");
-	    var scoreDiv = document.getElementById("score");
-	    var matchesDiv = document.getElementById("matches");
-	    var game = new _game2.default(boardDiv, scoreDiv, matchesDiv);
-	    game.render();
+	  var boardDiv = document.getElementById("board");
+	  var scoreDiv = document.getElementById("score");
+	  var matchesDiv = document.getElementsByClassName("matches");
+	  var matchesButton = document.getElementById("matchbutton");
+	
+	  debugger;
+	
+	  var game = new _game2.default(boardDiv, scoreDiv, matchesDiv[0], matchbutton);
+	  game.render();
+	
+	  matchesButton.addEventListener('click', toggleMatches);
 	});
+	
+	var toggleMatches = function toggleMatches(event) {
+	  var el = document.getElementsByClassName("matches")[0];
+	
+	  debugger;
+	
+	  if (el.classList) {
+	    el.classList.toggle("invisible");
+	  } else {
+	    var classes = el.className.split(' ');
+	    var existingIndex = classes.indexOf("invisible");
+	
+	    if (existingIndex >= 0) {
+	      classes.splice(existingIndex, 1);
+	    } else {
+	      classes.push("invisible");
+	    }
+	
+	    el.className = classes.join(' ');
+	  }
+	};
 
 /***/ },
 /* 1 */
@@ -112,6 +139,7 @@
 	        if (this.match(this.flippedArr[0], this.flippedArr[1])) {
 	          this.flippedArr = [];
 	          this.renderScore();
+	          this.renderMatches();
 	        }
 	      }
 	
@@ -123,6 +151,7 @@
 	      if (card1.value === card2.value) {
 	        this.score += 1;
 	        this.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
+	        this.won();
 	        return true;
 	      }
 	      return false;
@@ -142,7 +171,7 @@
 	          newCell.className = "card " + item.flipped;
 	          newCell.id = "" + i;
 	          if (item.flipped) {
-	            newCell.innerHTML = val + " of " + suit;
+	            newCell.innerHTML = val + " <br /> of <br /> " + suit;
 	          } else {
 	            newCell.addEventListener("click", this.flip.bind(this));
 	          }
@@ -154,6 +183,30 @@
 	    key: "renderScore",
 	    value: function renderScore() {
 	      this.scoreView.innerHTML = "Score: " + this.score + " Matches!";
+	    }
+	  }, {
+	    key: "renderMatches",
+	    value: function renderMatches() {
+	      this.matchesView.innerHTML = "";
+	      for (var i = 0; i < this.matchedPairs.length; i++) {
+	        var pair = this.matchedPairs[i];
+	        var pairDiv = document.createElement("div");
+	        pairDiv.className = "pair";
+	        for (var j = 0; j < 2; j++) {
+	          var card = document.createElement("div");
+	          card.className = "card matched true";
+	          card.innerHTML = this.matchedPairs[i][j].value + " <br /> of <br /> " + this.matchedPairs[i][j].suit;
+	          pairDiv.appendChild(card);
+	        }
+	        this.matchesView.appendChild(pairDiv);
+	      }
+	    }
+	  }, {
+	    key: "won",
+	    value: function won() {
+	      if (this.score === 26) {
+	        alert("You win!");
+	      }
 	    }
 	  }]);
 	

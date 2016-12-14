@@ -28,6 +28,7 @@ class Game{
       if(this.match(this.flippedArr[0], this.flippedArr[1])){
         this.flippedArr = [];
         this.renderScore();
+        this.renderMatches();
       }
     }
 
@@ -38,6 +39,7 @@ class Game{
     if(card1.value === card2.value){
       this.score += 1;
       this.matchedPairs.push([this.board.remove(card1), this.board.remove(card2)]);
+      this.won();
       return true;
     }
     return false
@@ -56,7 +58,7 @@ class Game{
         newCell.className = `card ${item.flipped}`
         newCell.id = `${i}`
         if(item.flipped){
-          newCell.innerHTML = `${val} of ${suit}`;
+          newCell.innerHTML = `${val} <br /> of <br /> ${suit}`;
         } else {
           newCell.addEventListener("click", this.flip.bind(this));
         }
@@ -67,6 +69,28 @@ class Game{
 
   renderScore(){
     this.scoreView.innerHTML = `Score: ${this.score} Matches!`
+  }
+
+  renderMatches(){
+    this.matchesView.innerHTML = "";
+    for(let i = 0; i < this.matchedPairs.length; i++){
+      let pair = this.matchedPairs[i];
+      let pairDiv = document.createElement("div");
+      pairDiv.className = "pair";
+      for(let j = 0; j < 2; j++){
+        let card = document.createElement("div");
+        card.className = "card matched true";
+        card.innerHTML = `${this.matchedPairs[i][j].value} <br /> of <br /> ${this.matchedPairs[i][j].suit}`;
+        pairDiv.appendChild(card);
+      }
+      this.matchesView.appendChild(pairDiv);
+    }
+  }
+
+  won(){
+    if(this.score === 26){
+      alert("You win!");
+    }
   }
 
 }
